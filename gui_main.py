@@ -25,6 +25,7 @@ class MainWindow(QMainWindow):
 
         self.ui.btn_fetch.clicked.connect(self.fetch_info)
         self.ui.btn_download.clicked.connect(self.download_video)
+        self.ui.progressBar_download.setVisible(False)
 
     def fetch_info(self):
         url = self.ui.lineEdit_url.text().strip()
@@ -70,10 +71,13 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, "Erreur", "Veuillez sélectionner un format.")
             return
 
+        self.ui.progressBar_download.setValue(0)
+        self.ui.progressBar_download.setVisible(True)
         self.ui.btn_download.setEnabled(False)
 
         self.download_thread = QThread()
         self.download_worker = DownloadWorker(self.video_url, fmt_id)
+        self.download_worker.progress.connect(self.ui.progressBar_download.setValue)
         self.download_worker.moveToThread(self.download_thread)
 
         self.download_thread.started.connect(self.download_worker.run)
@@ -87,10 +91,12 @@ class MainWindow(QMainWindow):
 
     def on_download_finished(self):
         self.ui.btn_download.setEnabled(True)
+        self.ui.progressBar_download.setValue(100)
         QMessageBox.information(self, "Succès", "Téléchargement terminé.")
 
     def on_download_error(self, error):
         self.ui.btn_download.setEnabled(True)
+        self.ui.progressBar_download.setValue(0)
         QMessageBox.critical(self, "Erreur", error)
 
 

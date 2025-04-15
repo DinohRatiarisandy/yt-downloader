@@ -25,6 +25,7 @@ class FetchWorker(QObject):
 class DownloadWorker(QObject):
     finished = Signal()
     error = Signal(str)
+    progress = Signal(int)
 
     def __init__(self, url: str, format_id: str):
         super().__init__()
@@ -33,8 +34,19 @@ class DownloadWorker(QObject):
 
     def run(self):
         try:
-            vd = VideoDownloader(self.url, self.format_id)
+            vd = VideoDownloader(
+                self.url, self.format_id, progress_hook=self.progress_hook
+            )
             vd.download()
             self.finished.emit()
         except Exception as e:
             self.error.emit(str(e))
+
+    def progress_hook(self, d):
+        if d["status"] == "downloading":
+            total_bytes = d.get("total_bytes") or d.get("total_bytes_estimate")
+            downloaded_bytes = d.get("downloaded_bytes", 0)
+
+            if total_bytes:
+                percent = int(downloaded_bytes / total_bytes * 100)
+                self.progress.emit(percent)
