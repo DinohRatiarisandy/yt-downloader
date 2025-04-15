@@ -25,7 +25,12 @@ class MainWindow(QMainWindow):
 
         self.ui.btn_fetch.clicked.connect(self.fetch_info)
         self.ui.btn_download.clicked.connect(self.download_video)
+        self.ui.lineEdit_url.textChanged.connect(self.on_update_button_state)
+        self.ui.combo_format.currentIndexChanged.connect(self.on_update_button_state)
+
         self.ui.progressBar_download.setVisible(False)
+        self.ui.btn_fetch.setEnabled(False)
+        self.ui.btn_download.setEnabled(False)
 
     def fetch_info(self):
         url = self.ui.lineEdit_url.text().strip()
@@ -98,6 +103,13 @@ class MainWindow(QMainWindow):
         self.ui.btn_download.setEnabled(True)
         self.ui.progressBar_download.setValue(0)
         QMessageBox.critical(self, "Erreur", error)
+
+    def on_update_button_state(self):
+        url_not_empty = bool(self.ui.lineEdit_url.text().strip())
+        format_selected = self.ui.combo_format.currentIndex() != -1
+
+        self.ui.btn_fetch.setEnabled(url_not_empty)
+        self.ui.btn_download.setEnabled(url_not_empty and format_selected)
 
 
 if __name__ == "__main__":
