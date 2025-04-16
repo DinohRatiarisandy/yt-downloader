@@ -1,15 +1,10 @@
-import json
-import os
 import sys
-from pathlib import Path
 
 import requests
 from PySide6.QtCore import QByteArray, QThread
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox
 
-from core.video_downloader import VideoDownloader
-from core.video_info import VideoInfo
 from core.workers import DownloadWorker, FetchWorker
 from ui.ui_main_window import Ui_MainWindow
 
