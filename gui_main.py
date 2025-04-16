@@ -1,8 +1,11 @@
+import json
 import os
 import sys
 from pathlib import Path
 
-from PySide6.QtCore import QThread
+import requests
+from PySide6.QtCore import QByteArray, QThread
+from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox
 
 from core.video_downloader import VideoDownloader
@@ -64,7 +67,26 @@ class MainWindow(QMainWindow):
             label = f"{fmt_id} | {f['ext']} | {f.get('height', '?')}p | {f['size']}"
             self.ui.combo_format.addItem(label, fmt_id)
 
-        QMessageBox.information(self, "Infos", f"Titre: {info['title']}")
+        # show the video title
+        self.ui.label_video_title.setText(f"{info['title']}")
+
+        # show the video thumbnail
+
+        with open("video_info.json", "w", encoding="utf-8") as f:
+            json.dump(info, f, indent=4, ensure_ascii=False)
+
+        thumbnail_url = info.get("thumbnail", "")
+        if thumbnail_url:
+            try:
+                response = requests.get(thumbnail_url)
+                img_data = response.content
+                pixmap = QPixmap()
+                pixmap.loadFromData(QByteArray(img_data))
+                self.ui.label_thumbnail.setPixmap(pixmap.scaled(320, 180))
+            except Exception:
+                self.ui.label_thumbnail.clear()
+        else:
+            self.ui.label_thumbnail.clear()
 
     def on_fetch_error(self, error):
         self.ui.btn_fetch.setEnabled(True)
