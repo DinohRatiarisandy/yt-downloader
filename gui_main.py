@@ -26,22 +26,19 @@ class MainWindow(QMainWindow):
         self.video_url = ""
         self.formats = []
 
-        self.ui.btn_fetch.clicked.connect(self.fetch_info)
         self.ui.btn_download.clicked.connect(self.download_video)
         self.ui.lineEdit_url.textChanged.connect(self.on_update_button_state)
         self.ui.combo_format.currentIndexChanged.connect(self.on_update_button_state)
 
         self.ui.progressBar_download.setVisible(False)
-        self.ui.btn_fetch.setEnabled(False)
-        self.ui.btn_download.setEnabled(False)
+        self.ui.btn_download.setVisible(False)
+        self.ui.combo_format.setVisible(False)
 
     def fetch_info(self):
         url = self.ui.lineEdit_url.text().strip()
         if not url:
             QMessageBox.warning(self, "Erreur", "Veuillez entrer une URL.")
             return
-
-        self.ui.btn_fetch.setEnabled(False)
 
         self.fetch_thread = QThread()
         self.fetch_worker = FetchWorker(url)
@@ -57,7 +54,6 @@ class MainWindow(QMainWindow):
         self.fetch_thread.start()
 
     def on_fetch_finished(self, info, formats):
-        self.ui.btn_fetch.setEnabled(True)
         self.formats = formats
         self.video_url = self.ui.lineEdit_url.text().strip()
 
@@ -70,11 +66,11 @@ class MainWindow(QMainWindow):
         # show the video title
         self.ui.label_video_title.setText(f"{info['title']}")
 
+        # show the download button and the combo_format
+        self.ui.combo_format.setVisible(True)
+        self.ui.btn_download.setVisible(True)
+
         # show the video thumbnail
-
-        with open("video_info.json", "w", encoding="utf-8") as f:
-            json.dump(info, f, indent=4, ensure_ascii=False)
-
         thumbnail_url = info.get("thumbnail", "")
         if thumbnail_url:
             try:
@@ -89,7 +85,6 @@ class MainWindow(QMainWindow):
             self.ui.label_thumbnail.clear()
 
     def on_fetch_error(self, error):
-        self.ui.btn_fetch.setEnabled(True)
         QMessageBox.critical(self, "Erreur", error)
 
     def download_video(self):
@@ -127,10 +122,13 @@ class MainWindow(QMainWindow):
         QMessageBox.critical(self, "Erreur", error)
 
     def on_update_button_state(self):
-        url_not_empty = bool(self.ui.lineEdit_url.text().strip())
+        url = self.ui.lineEdit_url.text().strip()
+        url_not_empty = bool(url)
         format_selected = self.ui.combo_format.currentIndex() != -1
 
-        self.ui.btn_fetch.setEnabled(url_not_empty)
+        if url_not_empty and url != self.video_url:
+            self.fetch_info()
+
         self.ui.btn_download.setEnabled(url_not_empty and format_selected)
 
 

@@ -50,32 +50,17 @@ class Ui_MainWindow(object):
 
         self.gridLayout_4.addLayout(self.gridLayout_2, 0, 0, 1, 1)
 
-        self.btn_fetch = QPushButton(self.layoutWidget)
-        self.btn_fetch.setObjectName(u"btn_fetch")
-
-        self.gridLayout_4.addWidget(self.btn_fetch, 0, 1, 1, 1)
-
         self.gridLayout_3 = QGridLayout()
         self.gridLayout_3.setObjectName(u"gridLayout_3")
-        self.btn_download = QPushButton(self.layoutWidget)
-        self.btn_download.setObjectName(u"btn_download")
-
-        self.gridLayout_3.addWidget(self.btn_download, 1, 1, 1, 1)
-
         self.combo_format = QComboBox(self.layoutWidget)
         self.combo_format.setObjectName(u"combo_format")
 
-        self.gridLayout_3.addWidget(self.combo_format, 1, 0, 1, 1)
+        self.gridLayout_3.addWidget(self.combo_format, 2, 0, 1, 1)
 
-        self.progressBar_download = QProgressBar(self.layoutWidget)
-        self.progressBar_download.setObjectName(u"progressBar_download")
-        self.progressBar_download.setEnabled(True)
-        self.progressBar_download.setValue(0)
-        self.progressBar_download.setTextVisible(True)
-        self.progressBar_download.setOrientation(Qt.Horizontal)
-        self.progressBar_download.setInvertedAppearance(False)
+        self.btn_download = QPushButton(self.layoutWidget)
+        self.btn_download.setObjectName(u"btn_download")
 
-        self.gridLayout_3.addWidget(self.progressBar_download, 2, 0, 1, 2)
+        self.gridLayout_3.addWidget(self.btn_download, 2, 1, 1, 1)
 
         self.gridLayout = QGridLayout()
         self.gridLayout.setObjectName(u"gridLayout")
@@ -91,13 +76,24 @@ class Ui_MainWindow(object):
 
         self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
-        self.gridLayout_3.addItem(self.horizontalSpacer, 3, 0, 1, 1)
+        self.gridLayout_3.addItem(self.horizontalSpacer, 4, 0, 1, 1)
+
+        self.progressBar_download = QProgressBar(self.layoutWidget)
+        self.progressBar_download.setObjectName(u"progressBar_download")
+        self.progressBar_download.setEnabled(True)
+        self.progressBar_download.setValue(0)
+        self.progressBar_download.setTextVisible(True)
+        self.progressBar_download.setOrientation(Qt.Horizontal)
+        self.progressBar_download.setInvertedAppearance(False)
+
+        self.gridLayout_3.addWidget(self.progressBar_download, 1, 0, 1, 2)
 
 
         self.gridLayout_4.addLayout(self.gridLayout_3, 2, 0, 1, 2)
 
         self.label_video_title = QLabel(self.layoutWidget)
         self.label_video_title.setObjectName(u"label_video_title")
+        self.label_video_title.setWordWrap(True)
 
         self.gridLayout_4.addWidget(self.label_video_title, 1, 0, 1, 2)
 
@@ -115,7 +111,6 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Video Downloader", None))
         self.label_url.setText(QCoreApplication.translate("MainWindow", u"URL:", None))
-        self.btn_fetch.setText(QCoreApplication.translate("MainWindow", u"Recup infos", None))
         self.btn_download.setText(QCoreApplication.translate("MainWindow", u"Download", None))
         self.label_thumbnail.setText("")
         self.label_video_title.setText("")
